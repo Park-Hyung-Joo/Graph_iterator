@@ -5,6 +5,7 @@
 namespace MyGraph{
 class Graph{
     struct Node{
+        int num;
         std::list< std::pair<int, int> > adj;
     };
     std::vector<Node> vertex;
@@ -13,7 +14,7 @@ public:
     using iter_node = std::vector<Node>::iterator;
     using stackItem = std::pair<iter_node, iter_edge>;
 
-    Graph(int V){ vertex.resize(V+1);}
+    Graph(int V){ vertex.resize(V+1); for(int i=1;i<=V;i++) vertex[i].num = i;}
     void insertEdge(int from, int to, int weight=1){ vertex[from].adj.push_back(std::make_pair(to,weight)); }
     struct Iterator;
     struct Iterator_DFS;
