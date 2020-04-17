@@ -38,15 +38,18 @@ public:
             Iterator_DFS temp(*graph,current - graph->vertex.begin());
             return temp;
         }
+        Node& operator*(){return *current;}
+        bool operator==(const Iterator &itr)const{ return current == itr.current; }
+        bool operator!=(const Iterator &itr)const{ return current != itr.current; }
     };
-    struct Iterator_DFS{
-        Graph *graph;
-        iter_node current;
+    struct Iterator_DFS: public Iterator{
         std::vector<bool> visited;
         std::stack< stackItem > stack;//pair<nodeNum,edge>
         Iterator_DFS(){};
         Iterator_DFS(Graph &g,int source);
-        Iterator_DFS(const Iterator_DFS &itr):graph(itr.graph),current(itr.current){
+        Iterator_DFS(const Iterator_DFS &itr){
+            graph=itr.graph;
+            current=itr.current;
             stack=itr.stack;
             visited=itr.visited;
         }
@@ -54,20 +57,13 @@ public:
         Iterator_DFS& operator=(const Iterator_DFS &itr);
         Iterator_DFS& operator++(){ DFS(); return *this; }//prefix
         Iterator_DFS operator++(int){ Iterator_DFS temp=*this; DFS(); return temp; }//postfix
-        bool operator==(const Iterator_DFS &itr)const{ return this->current == itr.current; }
-        bool operator==(const Iterator &itr)const{ return this->current == itr.current; }
-        bool operator!=(const Iterator_DFS &itr)const{ return this->current != itr.current; }
-        bool operator!=(const Iterator &itr)const{ return this->current != itr.current; }
-        iter_node& operator*(){ return this->current; }
     };
-    struct Iterator_BFS{
-        Graph *graph;
-        iter_node current;
+    struct Iterator_BFS: public Iterator{
         std::vector<bool> visited;
         std::queue< iter_node > queue;
         Iterator_BFS(){};
         Iterator_BFS(Graph &g,int source);
-        Iterator_BFS(const Iterator_BFS &itr):graph(itr.graph),current(itr.current){
+        Iterator_BFS(const Iterator_BFS &itr): Iterator(*(itr.graph),itr.current){
             queue=itr.queue;
             visited=itr.visited;
         }
@@ -75,11 +71,6 @@ public:
         Iterator_BFS& operator=(const Iterator_BFS &itr);
         Iterator_BFS& operator++(){ BFS(); return *this; }//prefix
         Iterator_BFS operator++(int){ Iterator_BFS temp=*this; BFS(); return temp; }//postfix
-        bool operator==(const Iterator_BFS &itr)const{ return this->current == itr.current; }
-        bool operator==(const Iterator &itr)const{ return this->current == itr.current; }
-        bool operator!=(const Iterator_BFS &itr)const{ return this->current != itr.current; }
-        bool operator!=(const Iterator &itr)const{ return this->current != itr.current; }
-        iter_node& operator*(){ return this->current; }
     };
     friend Iterator_DFS;
     friend Iterator_BFS;
@@ -92,8 +83,7 @@ Graph::Iterator_DFS& Graph::Iterator_DFS::operator=(const Iterator_DFS &itr){
     graph=itr.graph; current=itr.current; visited=itr.visited; stack=itr.stack;
     return *this;
 }
-Graph::Iterator_DFS::Iterator_DFS(Graph &g,int source):current(g.vertex.begin()+source){
-    graph = &g;
+Graph::Iterator_DFS::Iterator_DFS(Graph &g,int source): Iterator(g,source){
     visited.resize(g.vertex.size());
     visited[source]=true;
     stack.push(std::make_pair(g.vertex.begin()+source, g.vertex[source].adj.begin()));
@@ -113,7 +103,7 @@ void Graph::Iterator_DFS::DFS(){
     current = graph->vertex.begin() + (*temp.second).first;
     stack.push( std::make_pair( current, (*current).adj.begin() ) );  
 }
-Graph::Iterator_BFS::Iterator_BFS(Graph &g,int source):graph(&g),current(g.vertex.begin()+source){
+Graph::Iterator_BFS::Iterator_BFS(Graph &g,int source): Iterator(g,source){
     visited.resize(g.vertex.size());
     visited[source]=true;
     iter_edge itr = (*current).adj.begin();
