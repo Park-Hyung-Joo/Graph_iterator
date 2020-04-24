@@ -31,14 +31,6 @@ public:
         Iterator(Graph &g,iter_node start){
             graph = &g;  current = start;
         }
-        operator Iterator_BFS(){
-            Iterator_BFS temp(*graph,current - graph->vertex.begin());
-            return temp;
-        }
-        operator Iterator_DFS(){
-            Iterator_DFS temp(*graph,current - graph->vertex.begin());
-            return temp;
-        }
         Node& operator*(){return *current;}
         bool operator==(const Iterator &itr)const{ return current == itr.current; }
         bool operator!=(const Iterator &itr)const{ return current != itr.current; }
@@ -48,6 +40,7 @@ public:
         std::stack< stackItem > stack;//pair<nodeNum,edge>
         Iterator_DFS(){};
         Iterator_DFS(Graph &g,int source);
+        Iterator_DFS(const Iterator &itr);
         Iterator_DFS(const Iterator_DFS &itr);
         void DFS();
         Iterator_DFS& operator=(const Iterator_DFS &itr);
@@ -59,6 +52,7 @@ public:
         std::queue< iter_node > queue;
         Iterator_BFS(){};
         Iterator_BFS(Graph &g,int source);
+        Iterator_BFS(const Iterator &itr);
         Iterator_BFS(const Iterator_BFS &itr);
         void BFS();
         Iterator_BFS& operator=(const Iterator_BFS &itr);
@@ -70,10 +64,10 @@ public:
         std::priority_queue< std::pair<int,int>, std::vector< std::pair<int,int> >, std::greater< std::pair<int,int> > > pq;
         Iterator_dijk(){};
         Iterator_dijk(Graph &g,int source);
+        Iterator_dijk(const Iterator &itr);
         Iterator_dijk(const Iterator_dijk &itr);
         void dijk();
         Iterator_dijk& operator=(const Iterator_dijk &itr);
-        Iterator_dijk& operator=(const Iterator &itr);
         Iterator_dijk& operator++(){ dijk(); return *this; }//prefix
         Iterator_dijk operator++(int){ Iterator_dijk temp=*this; dijk(); return temp; }//postfix
     };

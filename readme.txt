@@ -1,3 +1,8 @@
+2020 04 24
+Iterator_dijk를 추가함
+여담: Iterator_dijk는 main에서 itr = g.source() 가 통하지 않았다. 알고보니 iterator class에서 
+Iterator_dijk형변환이 정의되지 않은 거었다. 이를 자손 class에서 부모 class를 이용한 생성자를 정의해 형변환을 대체하여 해결했다.
+
 2020 04.18
 헤더파일과 cpp파일로 분리. 내용을 동일
 
