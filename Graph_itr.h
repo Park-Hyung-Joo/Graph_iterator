@@ -2,6 +2,7 @@
 #include<queue>
 #include<stack>
 #include<list>
+#define INF 0x7FFFFFFF
 namespace MyGraph{
 class Graph{
     struct Node{
@@ -25,7 +26,7 @@ public:
         iter_node current;
         Iterator(){};
         Iterator(Graph &g,int source){
-            graph = &g;  current = g.vertex.begin()+source;
+            graph = &g;  current = g.vertex.begin() + source;
         }
         Iterator(Graph &g,iter_node start){
             graph = &g;  current = start;
@@ -47,12 +48,7 @@ public:
         std::stack< stackItem > stack;//pair<nodeNum,edge>
         Iterator_DFS(){};
         Iterator_DFS(Graph &g,int source);
-        Iterator_DFS(const Iterator_DFS &itr){
-            graph=itr.graph;
-            current=itr.current;
-            stack=itr.stack;
-            visited=itr.visited;
-        }
+        Iterator_DFS(const Iterator_DFS &itr);
         void DFS();
         Iterator_DFS& operator=(const Iterator_DFS &itr);
         Iterator_DFS& operator++(){ DFS(); return *this; }//prefix
@@ -63,18 +59,28 @@ public:
         std::queue< iter_node > queue;
         Iterator_BFS(){};
         Iterator_BFS(Graph &g,int source);
-        Iterator_BFS(const Iterator_BFS &itr): Iterator(*(itr.graph),itr.current){
-            queue=itr.queue;
-            visited=itr.visited;
-        }
+        Iterator_BFS(const Iterator_BFS &itr);
         void BFS();
         Iterator_BFS& operator=(const Iterator_BFS &itr);
         Iterator_BFS& operator++(){ BFS(); return *this; }//prefix
         Iterator_BFS operator++(int){ Iterator_BFS temp=*this; BFS(); return temp; }//postfix
     };
+    struct Iterator_dijk: public Iterator{
+        std::vector<int> dist;
+        std::priority_queue< std::pair<int,int>, std::vector< std::pair<int,int> >, std::greater< std::pair<int,int> > > pq;
+        Iterator_dijk(){};
+        Iterator_dijk(Graph &g,int source);
+        Iterator_dijk(const Iterator_dijk &itr);
+        void dijk();
+        Iterator_dijk& operator=(const Iterator_dijk &itr);
+        Iterator_dijk& operator=(const Iterator &itr);
+        Iterator_dijk& operator++(){ dijk(); return *this; }//prefix
+        Iterator_dijk operator++(int){ Iterator_dijk temp=*this; dijk(); return temp; }//postfix
+    };
     friend Iterator_DFS;
     friend Iterator_BFS;
-    Iterator source(int s){ Iterator temp(*this,s); return temp;}
+    friend Iterator_dijk;
+    Iterator source(int s = 1){ Iterator temp(*this,s); return temp;}//default : 1
     const Iterator end(){ Iterator itr(*this,vertex.end()); return itr; }
     const Iterator begin(){ Iterator itr(*this,vertex.begin()); return itr;}
 };
