@@ -14,9 +14,8 @@ public:
     using iter_edge = std::list< std::pair<int, int> >::iterator;
     using iter_node = std::vector<Node>::iterator;
     using stackItem = std::pair<iter_node, iter_edge>;
-
+    using HeapItem = std::pair<int, int>;
     Graph(int V){ vertex.resize(V+1); for(int i=1;i<=V;i++) vertex[i].num = i;}
-    void insertEdge(int from, int to, int weight=1){ vertex[from].adj.push_back(std::make_pair(to,weight)); }
     struct Iterator;
     struct Iterator_DFS;
     struct Iterator_BFS;
@@ -61,7 +60,7 @@ public:
     };
     struct Iterator_dijk: public Iterator{
         std::vector<int> dist;
-        std::priority_queue< std::pair<int,int>, std::vector< std::pair<int,int> >, std::greater< std::pair<int,int> > > pq;
+        std::priority_queue< HeapItem, std::vector< HeapItem >, std::greater< HeapItem > > pq;
         Iterator_dijk(){};
         Iterator_dijk(Graph &g,int source);
         Iterator_dijk(const Iterator &itr);
@@ -74,6 +73,7 @@ public:
     friend Iterator_DFS;
     friend Iterator_BFS;
     friend Iterator_dijk;
+    void insertEdge(int from, int to, int weight=1){ vertex[from].adj.push_back(std::make_pair(to,weight)); }
     Iterator source(int s = 1){ Iterator temp(*this,s); return temp;}//default : 1
     const Iterator end(){ Iterator itr(*this,vertex.end()); return itr; }
     const Iterator begin(){ Iterator itr(*this,vertex.begin()); return itr;}
